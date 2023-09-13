@@ -123,7 +123,11 @@ async fn main() {
                     // we already posted this one :-)
                     if err.is_unique_violation() {
                         posted_cache.push(child.id.clone());
+                    } else {
+                        eprintln!("DB Erro: {err}");
                     }
+                } else {
+                    eprintln!("DB Error: {why}");
                 }
                 continue;
             }
@@ -150,9 +154,10 @@ async fn main() {
                     },
                 }],
             };
-            println!("posting!");
             let send = client.post(&webhook_url).json(&message).send().await;
-            if let Ok(_) = send {}
+            if let Err(why) = send {
+                eprintln!("Error sending: {why}");
+            }
         }
 
         std::thread::sleep(Duration::from_secs(60));
