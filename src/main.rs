@@ -62,7 +62,7 @@ async fn main() {
 
     let mut posted_cache: Vec<Cow<str>> = Vec::with_capacity(100);
     loop {
-        let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot")
+        let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100")
         .send().await;
 
         let request = match test {
