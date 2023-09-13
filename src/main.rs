@@ -96,14 +96,16 @@ async fn main() {
                     continue;
                 }
             };
+
+
             let mut is_banned = false;
-            let url = child.url.as_ref().unwrap();
 
             // skip over already posted shit.
             if posted_cache.contains(&child.id) || child.ups < 300 || child.url.is_none() {
                 continue;
             }
 
+            let url = child.url.as_ref().unwrap();
             for banned in BANNED_URLS {
                 if url.contains(banned) {
                     is_banned = true;
@@ -134,11 +136,12 @@ async fn main() {
 
             let preview_url = format!("https://share.redd.it/preview/post/{}", child.id);
             let author_url = format!("u/{} on r/formula1", child.author);
+            let reddit_url = format!("https://reddit.com{}", child.permalink);
             let mesasge = format!(
-                "[go to Article on {}](<{}>)\n[go to Reddit post](<https://reddit.com{}>)",
+                "[go to Article on {}](<{}>)\n[go to Reddit post](<{}>)",
                 child.domain,
-                child.url.as_ref().unwrap(),
-                child.permalink
+                url,
+                reddit_url
             );
             let message = WebhookMessage {
                 content: "",
