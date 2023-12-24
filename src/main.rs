@@ -18,6 +18,8 @@ const BANNED_URLS: [&'static str; 2] = [
     "redd.it",
 ];
 
+const MIN_UPVOTES: u32 = 100;
+
 #[derive(Serialize)]
 pub struct Author<'a> {
     name: Cow<'a, str>,
@@ -69,6 +71,7 @@ async fn main() {
             Ok(data) => data,
             Err(why) => {
                 println!("Error: {why}");
+                
                 continue;
             }
         };
@@ -101,7 +104,7 @@ async fn main() {
             let mut is_banned = false;
 
             // skip over already posted shit.
-            if posted_cache.contains(&child.id) || child.ups < 300 || child.url.is_none() {
+            if posted_cache.contains(&child.id) || child.ups < MIN_UPVOTES || child.url.is_none() {
                 continue;
             }
 
