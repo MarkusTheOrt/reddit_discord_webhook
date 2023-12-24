@@ -12,13 +12,13 @@ const USER_AGENT: &str = "formula1discordredditapp:markus-dev@v0.1.0";
 
 const REDDIT_LOGO: &str = "https://fia.ort.dev/reddit_logo.png";
 
-const BANNED_URLS: [&'static str; 2] = [
+const BANNED_URLS: [&str; 2] = [
     // no links to reddit.com allowed! (they like to do that a lot)
     "reddit.com",
     "redd.it",
 ];
 
-const MIN_UPVOTES: u32 = 100;
+const MIN_UPVOTES: i32 = 100;
 
 #[derive(Serialize)]
 pub struct Author<'a> {
@@ -71,14 +71,15 @@ async fn main() {
             Ok(data) => data,
             Err(why) => {
                 println!("Error: {why}");
-                
+                std::thread::sleep(Duration::from_secs(60));
                 continue;
             }
         };
 
         if let Err(why) = request.error_for_status_ref() {
             println!("Error: {why}");
-            return;
+            std::thread::sleep(Duration::from_secs(60));
+            continue;
         }
 
         let data = request.json::<ReturnData>().await;

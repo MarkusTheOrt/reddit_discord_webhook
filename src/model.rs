@@ -25,6 +25,7 @@ pub enum PostKind {
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(tag = "kind", content = "data", rename_all = "snake_case")]
+#[allow(clippy::large_enum_variant)]
 pub enum ApiListing<'a> {
     T1,         // Comment, NOT IMPLEMENTED
     T2,         // Account, NOT IMPLEMENTED
