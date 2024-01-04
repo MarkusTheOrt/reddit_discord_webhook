@@ -1,0 +1,40 @@
+stages:
+  - build
+  - test
+  - deny
+
+build-job:
+  stage: build
+  script:
+    - cargo build --release
+
+rustfmt:
+    stage: test
+    script:
+        - cargo fmt --all --check
+
+lint-test-job:
+  stage: test
+  script:
+    - cargo clippy
+
+check-advisories:
+  stage: deny
+  allow_failure: true
+  script:
+    - cargo deny check advisories
+
+check-licenses:
+  stage: deny
+  script:
+    - cargo deny check licenses
+
+check-bans:
+  stage: deny
+  script:
+    - cargo deny check bans
+
+check-sources:
+  stage: deny
+  script:
+    - cargo deny check sources
