@@ -1,5 +1,6 @@
 name = "f1-news-discord-webhook"
 
 assets = [
-    "data.sqlite"
+    "data.sqlite",
+    ".sqlx/*"
 ]
