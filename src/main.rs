@@ -6,12 +6,13 @@ use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::Serialize;
 use shuttle_runtime::Error;
 use sqlx::SqlitePool;
+use tracing::{error, warn};
 
 use crate::model::*;
 
 mod model;
 
-const USER_AGENT: &str = "formula1discordredditapp:markus-dev@v0.2.0";
+const USER_AGENT: &str = "formula1discordredditapp:markus-dev@v0.3.0";
 
 const REDDIT_LOGO: &str = "https://fia.ort.dev/reddit_logo.png";
 
@@ -82,7 +83,7 @@ impl shuttle_runtime::Service for Runner {
             .expect("database");
 
         let mut posted_cache: Vec<Cow<str>> = Vec::with_capacity(100);
-
+        let mut first_start = true;
         loop {
             let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100")
         .send().await;
@@ -90,14 +91,14 @@ impl shuttle_runtime::Service for Runner {
             let request = match test {
                 Ok(data) => data,
                 Err(why) => {
-                    println!("Error: {why}");
+                    error!("Error: {why}");
                     std::thread::sleep(Duration::from_secs(60));
                     continue;
                 },
             };
 
             if let Err(why) = request.error_for_status_ref() {
-                println!("Error: {why}");
+                error!("Error: {why}");
                 std::thread::sleep(Duration::from_secs(60));
                 continue;
             }
@@ -106,7 +107,7 @@ impl shuttle_runtime::Service for Runner {
             let data = match data {
                 Ok(data) => data,
                 Err(why) => {
-                    eprintln!("Error decoding data: {why}");
+                    error!("Error decoding data: {why}");
                     std::thread::sleep(Duration::from_secs(60));
                     continue;
                 },
@@ -116,7 +117,7 @@ impl shuttle_runtime::Service for Runner {
                 let child = match child {
                     ApiListing::T3(t3) => t3,
                     _ => {
-                        println!("unsupported T-Type found!");
+                        warn!("unsupported T-Type found!");
                         continue;
                     },
                 };
@@ -153,10 +154,10 @@ impl shuttle_runtime::Service for Runner {
                         if err.is_unique_violation() {
                             posted_cache.push(child.id.clone());
                         } else {
-                            eprintln!("DB Erro: {err}");
+                            error!("DB Erro: {err}");
                         }
                     } else {
-                        eprintln!("DB Error: {why}");
+                        error!("DB Error: {why}");
                     }
                     continue;
                 }
@@ -186,10 +187,14 @@ impl shuttle_runtime::Service for Runner {
                         },
                     }],
                 };
-                let send =
-                    client.post(&webhook_url).json(&message).send().await;
-                if let Err(why) = send {
-                    eprintln!("Error sending: {why}");
+                if !first_start {
+                    let send =
+                        client.post(&webhook_url).json(&message).send().await;
+                    if let Err(why) = send {
+                        error!("Error sending: {why}");
+                    }
+                } else {
+                    first_start = false;
                 }
             }
 
