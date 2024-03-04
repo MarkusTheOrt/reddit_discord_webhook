@@ -13,10 +13,10 @@ const USER_AGENT: &str = "formula1discordredditapp:markus-dev@v0.2.0";
 
 const REDDIT_LOGO: &str = "https://fia.ort.dev/reddit_logo.png";
 
-const BANNED_URLS: [&str; 2] = [
-    // no links to reddit.com allowed! (they like to do that a lot)
+const BANNED_URLS: [&str; 3] = [
     "reddit.com",
     "redd.it",
+    "f1-insider.com",
 ];
 
 const MIN_UPVOTES: i32 = 100;
