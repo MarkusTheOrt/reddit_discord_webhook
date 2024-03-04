@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+anyhow = "1.0.80"
 base64 = "0.22.0"
 chrono = { version = "0.4.34", features = ["serde"] }
 dotenvy = "0.15.7"
@@ -16,4 +17,5 @@ shuttle-runtime = "0.40.0"
 shuttle-secrets = "0.40.0"
 sqlx = { version = "0.7.3", features = ["chrono", "runtime-tokio-rustls", "sqlite"] }
 tokio = { version = "1.36.0", features = ["full"] }
+tracing = "0.1.40"
 url = { version = "2.5.0", features = ["serde"] }

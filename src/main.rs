@@ -1,5 +1,6 @@
 use std::{borrow::Cow, net::SocketAddr, time::Duration};
 
+use anyhow::anyhow;
 use base64::{engine::general_purpose, Engine as _};
 use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::Serialize;
@@ -197,13 +198,25 @@ impl shuttle_runtime::Service for Runner {
     }
 }
 
+macro_rules! secret {
+    ($store: expr, $input:expr) => {
+        match $store.get($input) {
+            Some(secret) => secret,
+            None => {
+                return Err(anyhow!("Error getting secret {}", $input).into())
+            },
+        }
+    };
+}
+
 #[shuttle_runtime::main]
-async fn main() -> Result<impl shuttle_runtime::Service, shuttle_runtime::Error>
-{
+async fn main(
+    #[shuttle_secrets::Secrets] secrets_store: shuttle_secrets::SecretStore
+) -> Result<impl shuttle_runtime::Service, shuttle_runtime::Error> {
     let runner = Runner {
-        webhook_url: "".into(),
-        client_id: "".into(),
-        secret: "".into(),
+        webhook_url: secret!(secrets_store, "WEBHOOK_URL"),
+        client_id: secret!(secrets_store, "CLIENT_ID"),
+        secret: secret!(secrets_store, "SECRET_KEY"),
     };
     Ok(runner)
 }
