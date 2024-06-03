@@ -66,5 +66,5 @@ pub struct T3<'a> {
     /// the domain (www.example.com)
     pub domain: Cow<'a, str>,
     /// the time of post creation
-    pub created_utc: u64,
+    pub created_utc: u32,
 }

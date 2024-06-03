@@ -1,5 +1,5 @@
 use std::{
-    borrow::{Borrow, Cow},
+    borrow::Cow,
     time::{Duration, UNIX_EPOCH},
 };
 
@@ -100,10 +100,6 @@ async fn main() -> Result<(), ()> {
             std::thread::sleep(Duration::from_secs(60));
             continue;
         }
-        let t = request.text().await.expect("text");
-        println!("response: {t}");
-
-        return Ok(());
 
         let data = request.json::<ReturnData>().await;
         let data = match data {
