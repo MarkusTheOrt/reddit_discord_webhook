@@ -7,7 +7,7 @@ use base64::{engine::general_purpose, Engine as _};
 use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::Serialize;
 use sqlx::PgPool;
-use tracing::{error, warn};
+use tracing::{error, info, warn};
 
 use crate::model::*;
 
@@ -123,6 +123,7 @@ async fn main() -> Result<(), ()> {
 
             // skip posts older than once week.
             if nau - child.created_utc > 60 * 60 * 24 * 7 {
+                info!("Skipping {} due to age ({})", child.id, nau - child.created_utc);
                 continue;
             }
 
