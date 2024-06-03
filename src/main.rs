@@ -81,7 +81,7 @@ async fn main() -> Result<(), ()> {
     loop {
         let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100")
         .send().await;
-
+        
         let request = match test {
             Ok(data) => data,
             Err(why) => {
@@ -90,7 +90,7 @@ async fn main() -> Result<(), ()> {
                 continue;
             },
         };
-
+        info!("looping louie!");
         if let Err(why) = request.error_for_status_ref() {
             error!("Error: {why}");
             std::thread::sleep(Duration::from_secs(60));
