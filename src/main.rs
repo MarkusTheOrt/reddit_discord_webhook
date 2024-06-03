@@ -54,7 +54,7 @@ async fn main() -> Result<(), ()> {
     let webhook_url =
         std::env::var("WEBHOOK_URL").expect("Webhook URL not set!");
     let client_id = std::env::var("CLIENT_ID").expect("Client ID not set!");
-    let secret = std::env::var("SECRET").expect("Secret key not set!");
+    let secret = std::env::var("CLIENT_SECRET").expect("Secret key not set!");
     let database_url =
         std::env::var("DATABASE_URL").expect("Database URL not set!");
 
