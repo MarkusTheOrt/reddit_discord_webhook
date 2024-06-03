@@ -8,7 +8,6 @@ use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::Serialize;
 use sqlx::PgPool;
 use tracing::{error, info, warn};
-use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::model::*;
 
@@ -60,14 +59,16 @@ async fn main() -> Result<(), ()> {
     let secret = std::env::var("CLIENT_SECRET").expect("Secret key not set!");
     let database_url =
         std::env::var("DATABASE_URL").expect("Database URL not set!");
+    
+    let creds = std::env::var("CREDENTIALS").expect("CREDS NOT SET");
 
-    let encoded_creds =
+    let _encoded_creds =
         general_purpose::STANDARD.encode(format!("{client_id}:{secret}"));
 
     let mut headers = HeaderMap::new();
     headers.append(
         "Authorization",
-        format!("BASIC {encoded_creds}").parse().expect("Header invalid"),
+        format!("BASIC {creds}").parse().expect("Header invalid"),
     );
 
     let client = ClientBuilder::new()
