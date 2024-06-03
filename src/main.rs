@@ -1,5 +1,5 @@
 use std::{
-    borrow::Cow,
+    borrow::{Borrow, Cow},
     time::{Duration, UNIX_EPOCH},
 };
 
@@ -79,13 +79,14 @@ async fn main() -> Result<(), ()> {
 
     let database =
         PgPool::connect(&database_url).await.expect("Database Connection");
+    
+    info!("Reddit webhook starting...");
 
     let mut posted_cache: Vec<Cow<str>> = Vec::with_capacity(100);
     let mut first_start = true;
     loop {
         let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100")
         .send().await;
-        println!("Looping!");
         let request = match test {
             Ok(data) => data,
             Err(why) => {
@@ -94,12 +95,15 @@ async fn main() -> Result<(), ()> {
                 continue;
             },
         };
-        info!("looping louie!");
         if let Err(why) = request.error_for_status_ref() {
             error!("Error: {why}");
             std::thread::sleep(Duration::from_secs(60));
             continue;
         }
+        let t = request.text().await.expect("text");
+        println!("response: {t}");
+
+        return Ok(());
 
         let data = request.json::<ReturnData>().await;
         let data = match data {
