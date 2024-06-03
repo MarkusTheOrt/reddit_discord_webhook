@@ -65,4 +65,6 @@ pub struct T3<'a> {
     pub permalink: Cow<'a, str>,
     /// the domain (www.example.com)
     pub domain: Cow<'a, str>,
+    /// the time of post creation
+    pub created_utc: u64,
 }
