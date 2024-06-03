@@ -126,11 +126,11 @@ async fn main() -> Result<(), ()> {
             };
 
             // skip posts older than once week.
-            if nau - child.created_utc as u64 > 60 * 60 * 24 * 7 {
+            if nau - child.created() > 60 * 60 * 24 * 7 {
                 info!(
                     "Skipping {} due to age ({})",
                     child.id,
-                    nau - child.created_utc as u64
+                    nau - child.created()
                 );
                 continue;
             }

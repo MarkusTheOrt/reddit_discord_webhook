@@ -66,5 +66,11 @@ pub struct T3<'a> {
     /// the domain (www.example.com)
     pub domain: Cow<'a, str>,
     /// the time of post creation
-    pub created_utc: u32,
+    pub created_utc: f64,
+}
+
+impl<'a> T3<'_>{
+    pub fn created(&self) -> u64 {
+        return self.created_utc as u64;
+    }
 }
