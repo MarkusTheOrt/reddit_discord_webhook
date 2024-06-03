@@ -8,6 +8,7 @@ use reqwest::{header::HeaderMap, ClientBuilder};
 use serde::Serialize;
 use sqlx::PgPool;
 use tracing::{error, info, warn};
+use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::model::*;
 
@@ -50,6 +51,8 @@ pub struct WebhookMessage<'a> {
 
 #[tokio::main]
 async fn main() -> Result<(), ()> {
+    tracing_subscriber::fmt().init();
+
     _ = dotenvy::dotenv();
     let webhook_url =
         std::env::var("WEBHOOK_URL").expect("Webhook URL not set!");
@@ -81,7 +84,7 @@ async fn main() -> Result<(), ()> {
     loop {
         let test = client.get("https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100")
         .send().await;
-        
+        println!("Looping!");
         let request = match test {
             Ok(data) => data,
             Err(why) => {
@@ -123,7 +126,11 @@ async fn main() -> Result<(), ()> {
 
             // skip posts older than once week.
             if nau - child.created_utc > 60 * 60 * 24 * 7 {
-                info!("Skipping {} due to age ({})", child.id, nau - child.created_utc);
+                info!(
+                    "Skipping {} due to age ({})",
+                    child.id,
+                    nau - child.created_utc
+                );
                 continue;
             }
 
