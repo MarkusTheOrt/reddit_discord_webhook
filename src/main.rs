@@ -59,7 +59,7 @@ async fn main() -> Result<(), ()> {
     let secret = std::env::var("CLIENT_SECRET").expect("Secret key not set!");
     let database_url =
         std::env::var("DATABASE_URL").expect("Database URL not set!");
-    
+
     let creds = std::env::var("CREDENTIALS").expect("CREDS NOT SET");
 
     let _encoded_creds =
@@ -79,7 +79,7 @@ async fn main() -> Result<(), ()> {
 
     let database =
         PgPool::connect(&database_url).await.expect("Database Connection");
-    
+
     info!("Reddit webhook starting...");
 
     let mut posted_cache: Vec<Cow<str>> = Vec::with_capacity(100);
