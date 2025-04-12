@@ -1,0 +1,5 @@
+services:
+  poster:
+    image: codeberg.org/mto/reddit_discord_webhook:latest
+    restart: unless-stopped
+    env_file: ./.env
