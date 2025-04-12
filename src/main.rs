@@ -3,8 +3,8 @@ use std::{
     time::{Duration, UNIX_EPOCH},
 };
 
-use base64::{engine::general_purpose, Engine as _};
-use reqwest::{header::HeaderMap, ClientBuilder};
+use base64::{Engine as _, engine::general_purpose};
+use reqwest::{ClientBuilder, header::HeaderMap};
 use serde::Serialize;
 use sqlx::PgPool;
 use tracing::{error, info, warn};
