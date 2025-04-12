@@ -6,7 +6,7 @@ use std::{
 use base64::{Engine as _, engine::general_purpose};
 use reqwest::{ClientBuilder, header::HeaderMap};
 use serde::Serialize;
-use sqlx::PgPool;
+use sqlx::MySqlPool;
 use tracing::{error, info, warn};
 
 use crate::model::*;
@@ -78,7 +78,7 @@ async fn main() -> Result<(), ()> {
         .expect("clientbuilder");
 
     let database =
-        PgPool::connect(&database_url).await.expect("Database Connection");
+        MySqlPool::connect(&database_url).await.expect("Database Connection");
 
     info!("Reddit webhook starting...");
 
@@ -159,7 +159,7 @@ async fn main() -> Result<(), ()> {
             }
 
             let db_res =
-                sqlx::query!("INSERT INTO reddit (id) VALUES ($1)", &child.id)
+                sqlx::query!("INSERT INTO reddit_posts (id) VALUES (?)", &child.id)
                     .execute(&database)
                     .await;
             if let Err(why) = db_res {
