@@ -3,7 +3,15 @@ name = "reddit_discord_webhook"
 version = "1.0.0"
 edition = "2024"
 license = "APACHE-2 AND MIT"
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+default_run = "reddit_discord_webhook"
+
+[[bin]]
+name = "docker-build"
+path = "tools/docker-build.rs"
+
+[[bin]]
+name = "docker-push"
+path = "tools/docker-push.rs"
 
 [dependencies]
 anyhow = "1.0.97"
