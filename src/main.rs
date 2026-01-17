@@ -70,7 +70,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         None
     };
 
-    sentry::start_session();
     let webhook_url = std::env::var("WEBHOOK_URL").expect("Webhook URL not set!");
     let client_id = std::env::var("CLIENT_ID").expect("Client ID not set!");
     let secret = std::env::var("CLIENT_SECRET").expect("Secret key not set!");
@@ -110,6 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         if should_stop.borrow().has_changed() {
             break;
         }
+        sentry::start_session();
         let tx = sentry::start_transaction(TransactionContext::new("Main Loop", "app.loop"));
         let span = tx.start_child("http.client", "GET https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100");
         span.set_request(sentry::protocol::Request {
@@ -273,6 +273,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         tx.set_status(sentry::protocol::SpanStatus::Ok);
         tx.finish();
+        sentry::end_session();
         tokio::time::sleep(Duration::from_secs(60)).await;
     }
     drop(c);
