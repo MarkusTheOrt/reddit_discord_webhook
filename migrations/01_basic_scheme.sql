@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS "main"."reddit_posts" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  "reddit_id" TEXT UNIQUE NOT NULL,
+  "created_at" TEXT NOT NULL DEFAULT (strftime('%Y-%m-%dT%H:%M:%SZ', CURRENT_TIMESTAMP))
+)
