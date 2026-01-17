@@ -20,6 +20,7 @@ RUN mkdir /app/migrations
 COPY --from=builder /app/migrations/* /app/migrations/
 
 RUN chmod +x /app/reddit_discord_webhook
+RUN chmod +x /app/migrate
 
 STOPSIGNAL SIGINT
 

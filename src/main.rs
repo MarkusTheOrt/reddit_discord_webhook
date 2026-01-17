@@ -109,7 +109,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             break;
         }
         let tx = sentry::start_transaction(TransactionContext::new("Main Loop", "app.loop"));
-        let span = tx.start_child("http.client", "Requesting Posts");
+        let span = tx.start_child("http.client", "GET https://www.reddit.com/search.json?q=subreddit%3Aformula1%20flair%3Apost-news&source=recent&sort=hot&limit=100");
         span.set_request(sentry::protocol::Request {
             url: Some("https://www.reddit.com/search.json".parse().unwrap()),
             method: Some("GET".into()),
@@ -176,11 +176,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // skip posts older than once week.
             if nau - child.created() > 60 * 60 * 24 * 7 {
-                info!(
-                    "Skipping {} due to age ({})",
-                    child.id,
-                    nau - child.created()
-                );
                 continue;
             }
 
@@ -212,9 +207,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .await;
             if let Err(why) = res {
                 if let libsql::Error::SqliteFailure(a, _) = why {
-                    if a == libsql::ffi::ErrorCode::ConstraintViolation as i32 {
-                        span.set_status(SpanStatus::Ok);
+                    if a == 2067
+                    /* = Unique Constraint Violation */
+                    {
                         posted_cache.push(child.id.clone());
+                        span.set_status(SpanStatus::Ok);
+                        span.finish();
+                        continue;
                     }
                 } else {
                     sentry::capture_error(&why);
@@ -248,7 +247,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }],
             };
             if !first_start {
-                let span = tx.start_child("http.client", "Sending Webhook");
+                let span = tx.start_child("http.client", &format!("POST {webhook_url}"));
                 span.set_status(SpanStatus::Ok);
                 span.set_request(sentry::protocol::Request {
                     url: Some(webhook_url.parse().unwrap()),
