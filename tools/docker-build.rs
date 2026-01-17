@@ -15,7 +15,7 @@ pub fn main() {
         .args([
             "build",
             "-f",
-            "docker/Dockerfile.bot",
+            "Dockerfile",
             "-t",
             env!("CARGO_PKG_NAME"),
             ".",
