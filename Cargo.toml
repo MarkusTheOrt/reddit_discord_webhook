@@ -1,6 +1,6 @@
 [package]
 name = "reddit_discord_webhook"
-version = "1.1.0"
+version = "1.1.1"
 edition = "2024"
 license = "APACHE-2 AND MIT"
 default-run = "reddit_discord_webhook"

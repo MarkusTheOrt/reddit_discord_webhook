@@ -60,6 +60,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let c = if let Ok(var) = std::env::var("SENTRY_DSN") {
         Some(sentry::init(sentry::ClientOptions {
+            release: sentry::release_name!(),
             dsn: var.into_dsn().expect("VALID SENTRY DSN"),
             traces_sample_rate: 1.0,
             sample_rate: 1.0,
@@ -69,6 +70,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         None
     };
 
+    sentry::start_session();
     let webhook_url = std::env::var("WEBHOOK_URL").expect("Webhook URL not set!");
     let client_id = std::env::var("CLIENT_ID").expect("Client ID not set!");
     let secret = std::env::var("CLIENT_SECRET").expect("Secret key not set!");
